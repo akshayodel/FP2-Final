@@ -41,16 +41,6 @@ df_cpi = pd.read_csv(
 # based on the common columns 'Date' and 'ds', using an inner join
 merged_df = df_cpi.merge(data_series, left_on='Date', right_on='ds', how='inner')
 
-# Define the ARIMA order
-order = (1, 0, 0)  # ARIMA order
-
-# Create an ARIMAX model with the specified order, using 'y' as the endogenous variable
-# and 'CPIIN' as the exogenous variable in the training data
-model_arimax = ARIMA(merged_df['y'], exog=merged_df['CPIIN'], order=order)
-
-# Fit the ARIMAX model to the training data
-model_arimax_fit = model_arimax.fit()
-
 # Streamlit App
 st.title("Oil Production Forecast")
 
@@ -69,8 +59,22 @@ long_term_duration = 60
 
 # Function to predict oil production
 def predict_oil_production(months_diff, title):
+    # Select the columns 'ds', 'CPIIN', and 'y' from the merged DataFrame
+    # and slice the rows from the beginning up to 'period' (exclusive) to create the training data
+    train_data = merged_df[['ds', 'CPIIN', 'y']][:period]
+
+    # Define the ARIMA order
+    order = (1, 0, 0)  # ARIMA order
+
+    # Create an ARIMAX model with the specified order, using 'y' as the endogenous variable
+    # and 'CPIIN' as the exogenous variable in the training data
+    model_arimax = ARIMA(train_data['y'], exog=train_data['CPIIN'], order=order)
+
+    # Fit the ARIMAX model to the training data
+    model_arimax_fit = model_arimax.fit()
+
     # Predicting CPIIN
-    predicted_value_cpiin = pd.DataFrame(model_fit.predict(start=len(merged_df), end=len(merged_df) + months_diff - 1))
+    predicted_value_cpiin = pd.DataFrame(model_arimax_fit.predict(start=len(merged_df), end=len(merged_df) + months_diff - 1))
     predicted_value_cpiin['CPIIN'] = predicted_value_cpiin['predicted_mean']
     # Create a new index
     new_index = range(len(merged_df), len(merged_df) + months_diff)
