@@ -140,29 +140,29 @@ start_date = st.date_input('Select Test Start Date', value=merged_df['ds'].dt.da
 end_date = st.date_input('Select Test End Date', value=datetime.today().date() + relativedelta(months=4))
 button_predict = st.button('Predict')
 
-if button_predict:
-    date_diff = end_date - start_date
-    months_diff = (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month) + 1
-    
-    # Predict for the specified duration
-    st.subheader('Oil Production Forecast: Custom Date')
-    
-    try:
-        prediction_custom = predict_oil_production(months_diff)
-        st.dataframe(prediction_custom)
-    except ValueError as e:
-        st.error(str(e))
-        st.stop()
-
-# # Define the main Streamlit app logic
 # if button_predict:
 #     date_diff = end_date - start_date
 #     months_diff = (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month) + 1
     
 #     # Predict for the specified duration
 #     st.subheader('Oil Production Forecast: Custom Date')
-#     prediction_custom = predict_oil_production(months_diff)
-#     st.dataframe(prediction_custom)
+    
+#     try:
+#         prediction_custom = predict_oil_production(months_diff)
+#         st.dataframe(prediction_custom)
+#     except ValueError as e:
+#         st.error(str(e))
+#         st.stop()
+
+# Define the main Streamlit app logic
+if button_predict:
+    date_diff = end_date - start_date
+    months_diff = (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month) + 1
+    
+    # Predict for the specified duration
+    st.subheader('Oil Production Forecast: Custom Date')
+    prediction_custom = predict_oil_production(months_diff)
+    st.dataframe(prediction_custom)
     
     # Predict for the short-term duration (6 months)
     st.subheader('Oil Production Forecast: Short-Term Duration')
