@@ -78,7 +78,7 @@ def predict_oil_production(months_diff, title):
 
     # Predicting CPIIN
     predicted_value_cpiin = pd.DataFrame(model_arimax_fit.predict(start=len(merged_df), end=len(merged_df) + months_diff - 1,
-                                                                  exog=train_data['CPIIN'][-months_diff:].values.reshape(-1, 1)))
+                                                                  exog=train_data['CPIIN'][-months_diff:].values.reshape(months_diff, 1)))
     predicted_value_cpiin['CPIIN'] = predicted_value_cpiin['predicted_mean']
     # Create a new index
     new_index = range(len(merged_df), len(merged_df) + months_diff)
@@ -86,7 +86,7 @@ def predict_oil_production(months_diff, title):
     predicted_value_cpiin.index = new_index
 
     # Predicting oil production
-    exog_reshaped = predicted_value_cpiin['CPIIN'].values.reshape(-1, 1)
+    exog_reshaped = train_data['CPIIN'][-months_diff:].values.reshape(months_diff, 1)
     # Make predictions using the trained ARIMAX model
     predicted_values = pd.DataFrame(model_arimax_fit.predict(start=len(merged_df) - 6, end=len(merged_df) - 6 + months_diff - 1,
                                                              exog=exog_reshaped))
