@@ -90,8 +90,7 @@ def predict_oil_production(months_diff):
     predicted_cpiin = pd.DataFrame(predicted_cpiin, columns=['CPIIN'])
     
     # Predict oil production using the trained ARIMAX model
-    exog_reshaped = np.array(predicted_cpiin['CPIIN']).reshape(-1, 1)
-    #exog_reshaped = predicted_cpiin['CPIIN'].values.reshape(-1, 1)
+    exog_reshaped = predicted_cpiin['CPIIN'].values.reshape(-1, 1)
     predicted_values = model_arimax_fit.predict(start=len(merged_df)-6, end=len(merged_df)-6 + months_diff - 1, exog=exog_reshaped)
     predicted_values = pd.DataFrame(predicted_values, columns=['Oil_Production'])
     
@@ -105,6 +104,28 @@ def predict_oil_production(months_diff):
     predicted_df = pd.concat([predicted_df, predicted_values], axis=1)
     
     return predicted_df
+
+# def predict_oil_production(months_diff):
+#     # Predict CPIIN
+#     predicted_cpiin = model_arimax_fit.predict(start=len(data), end=len(data) + months_diff - 1)
+#     predicted_cpiin = pd.DataFrame(predicted_cpiin, columns=['CPIIN'])
+    
+#     # Predict oil production using the trained ARIMAX model
+#     exog_reshaped = np.array(predicted_cpiin['CPIIN']).reshape(-1, 1)
+#     #exog_reshaped = predicted_cpiin['CPIIN'].values.reshape(-1, 1)
+#     predicted_values = model_arimax_fit.predict(start=len(merged_df)-6, end=len(merged_df)-6 + months_diff - 1, exog=exog_reshaped)
+#     predicted_values = pd.DataFrame(predicted_values, columns=['Oil_Production'])
+    
+#     # Generate monthly dates
+#     start_date = merged_df['ds'].dt.date.max() - relativedelta(months=5)
+#     end_date = datetime.today().date() + relativedelta(months=4)
+#     dates = pd.date_range(start=start_date, end=end_date, freq='MS')
+    
+#     # Create a DataFrame with the predicted values and dates
+#     predicted_df = pd.DataFrame({'Month': dates})
+#     predicted_df = pd.concat([predicted_df, predicted_values], axis=1)
+    
+#     return predicted_df
 
 # Create Streamlit widgets
 st.header('Oil Production Forecasting')
