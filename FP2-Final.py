@@ -90,7 +90,12 @@ def predict_oil_production(months_diff):
     predicted_cpiin = pd.DataFrame(predicted_cpiin, columns=['CPIIN'])
     
     # Predict oil production using the trained ARIMAX model
-    exog_reshaped = predicted_cpiin['CPIIN'].values.reshape(-1, 1)
+    exog_reshaped = np.array(predicted_cpiin['CPIIN']).reshape(-1, 1)
+    
+    # Check if exog_reshaped is empty
+    if len(exog_reshaped) == 0:
+        raise ValueError('No exogenous values available for prediction.')
+    
     predicted_values = model_arimax_fit.predict(start=len(merged_df)-6, end=len(merged_df)-6 + months_diff - 1, exog=exog_reshaped)
     predicted_values = pd.DataFrame(predicted_values, columns=['Oil_Production'])
     
@@ -104,6 +109,7 @@ def predict_oil_production(months_diff):
     predicted_df = pd.concat([predicted_df, predicted_values], axis=1)
     
     return predicted_df
+
 
 # def predict_oil_production(months_diff):
 #     # Predict CPIIN
@@ -134,15 +140,29 @@ start_date = st.date_input('Select Test Start Date', value=merged_df['ds'].dt.da
 end_date = st.date_input('Select Test End Date', value=datetime.today().date() + relativedelta(months=4))
 button_predict = st.button('Predict')
 
-# Define the main Streamlit app logic
 if button_predict:
     date_diff = end_date - start_date
     months_diff = (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month) + 1
     
     # Predict for the specified duration
     st.subheader('Oil Production Forecast: Custom Date')
-    prediction_custom = predict_oil_production(months_diff)
-    st.dataframe(prediction_custom)
+    
+    try:
+        prediction_custom = predict_oil_production(months_diff)
+        st.dataframe(prediction_custom)
+    except ValueError as e:
+        st.error(str(e))
+        st.stop()
+
+# # Define the main Streamlit app logic
+# if button_predict:
+#     date_diff = end_date - start_date
+#     months_diff = (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month) + 1
+    
+#     # Predict for the specified duration
+#     st.subheader('Oil Production Forecast: Custom Date')
+#     prediction_custom = predict_oil_production(months_diff)
+#     st.dataframe(prediction_custom)
     
     # Predict for the short-term duration (6 months)
     st.subheader('Oil Production Forecast: Short-Term Duration')
