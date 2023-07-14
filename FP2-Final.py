@@ -86,7 +86,7 @@ model_arimax_fit = model_arimax.fit()
 # Define the prediction function
 def predict_oil_production(months_diff):
     # Predict CPIIN
-    predicted_cpiin = model_fit.predict(start=len(data), end=len(data) + months_diff - 1)
+    predicted_cpiin = model_arimax_fit.predict(start=len(data), end=len(data) + months_diff - 1)
     predicted_cpiin = pd.DataFrame(predicted_cpiin, columns=['CPIIN'])
     
     # Predict oil production using the trained ARIMAX model
