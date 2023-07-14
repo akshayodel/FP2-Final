@@ -90,7 +90,8 @@ def predict_oil_production(months_diff):
     predicted_cpiin = pd.DataFrame(predicted_cpiin, columns=['CPIIN'])
     
     # Predict oil production using the trained ARIMAX model
-    exog_reshaped = predicted_cpiin['CPIIN'].values.reshape(-1, 1)
+    exog_reshaped = np.array(predicted_cpiin['CPIIN']).reshape(-1, 1)
+    #exog_reshaped = predicted_cpiin['CPIIN'].values.reshape(-1, 1)
     predicted_values = model_arimax_fit.predict(start=len(merged_df)-6, end=len(merged_df)-6 + months_diff - 1, exog=exog_reshaped)
     predicted_values = pd.DataFrame(predicted_values, columns=['Oil_Production'])
     
