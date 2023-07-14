@@ -59,6 +59,9 @@ long_term_duration = 60
 
 # Function to predict oil production
 def predict_oil_production(months_diff, title):
+    # Calculate the number of rows to slice for training data
+    period = len(merged_df) - months_diff
+
     # Select the columns 'ds', 'CPIIN', and 'y' from the merged DataFrame
     # and slice the rows from the beginning up to 'period' (exclusive) to create the training data
     train_data = merged_df[['ds', 'CPIIN', 'y']][:period]
